@@ -8,7 +8,7 @@ The base URL for all endpoints is `/api/v1`.
 
 ##### Authentication
 
-- `POST /api/v1/login`
+- `POST /login`
 
   - **Description:** Log in with registered credentials.
   - **Request Body:**
@@ -17,7 +17,7 @@ The base URL for all endpoints is `/api/v1`.
   - **Response:**
     - `token`: Authentication token
 
-- `POST /api/v1/signup`
+- `POST /signup`
 
   - **Description:** Register a new user.
   - **Request Body:**
@@ -26,14 +26,14 @@ The base URL for all endpoints is `/api/v1`.
   - **Response:**
     - `token`: Authentication token
 
-- `POST /api/v1/forgot-password`
+- `POST /forgot-password`
 
   - **Description:** Request to reset forgotten password.
   - **Request Body:**
     - `email`: String (required)
   - **Response:** Success message
 
-- `POST /api/v1/reset-password/:token`
+- `POST /reset-password/:token`
   - **Description:** Reset password with token received via email.
   - **Request Body:**
     - `password`: String (required)
@@ -41,23 +41,23 @@ The base URL for all endpoints is `/api/v1`.
 
 ##### User Management
 
-- `GET /api/v1/users`
+- `GET /users`
   - **Description:** Get all users (requires authentication).
   - **Response:** Array of user objects
 
 ##### Group Management
 
-- `GET /api/v1/groups`
+- `GET /groups`
 
   - **Description:** Get all groups (requires authentication).
   - **Response:** Array of group objects
 
-- `GET /api/v1/groups/:id`
+- `GET /groups/:id`
 
   - **Description:** Get a single group by ID (requires authentication).
   - **Response:** Group object
 
-- `POST /api/v1/groups`
+- `POST /groups`
 
   - **Description:** Create a new group (requires authentication).
   - **Request Body:**
@@ -65,7 +65,7 @@ The base URL for all endpoints is `/api/v1`.
     - `description`: String
   - **Response:** Created group object
 
-- `PUT /api/v1/groups/:id`
+- `PUT /groups/:id`
 
   - **Description:** Update an existing group (requires authentication).
   - **Request Body:**
@@ -73,23 +73,23 @@ The base URL for all endpoints is `/api/v1`.
     - `description`: String
   - **Response:** Updated group object
 
-- `DELETE /api/v1/groups/:id`
+- `DELETE /groups/:id`
   - **Description:** Delete a group by ID (requires authentication).
   - **Response:** Success message
 
 ##### Member Management
 
-- `GET /api/v1/members`
+- `GET /members`
 
   - **Description:** Get all members.
   - **Response:** Array of member objects
 
-- `GET /api/v1/members/:id`
+- `GET /members/:id`
 
   - **Description:** Get a single member by ID (requires authentication).
   - **Response:** Member object
 
-- `POST /api/v1/members`
+- `POST /members`
 
   - **Description:** Create a new member (requires authentication).
   - **Request Body:**
@@ -98,7 +98,7 @@ The base URL for all endpoints is `/api/v1`.
     - `phone`: String
   - **Response:** Created member object
 
-- `PUT /api/v1/members/:id`
+- `PUT /members/:id`
 
   - **Description:** Update an existing member (requires authentication).
   - **Request Body:**
@@ -107,30 +107,30 @@ The base URL for all endpoints is `/api/v1`.
     - `phone`: String
   - **Response:** Updated member object
 
-- `DELETE /api/v1/members/:id`
+- `DELETE /members/:id`
   - **Description:** Delete a member by ID (requires authentication).
   - **Response:** Success message
 
 ##### Ballot Management
 
-- `GET /api/v1/ballots`
+- `GET /ballots`
 
   - **Description:** Get user's ballot status (requires authentication).
   - **Response:** Ballot status object
 
-- `GET /api/v1/ballots/all`
+- `GET /ballots/all`
 
   - **Description:** Get all ballots (requires authentication).
   - **Response:** Array of ballot objects
 
-- `POST /api/v1/ballots`
+- `POST /ballots`
 
   - **Description:** Create a new ballot (requires authentication).
   - **Request Body:**
     - `groupId`: String (required)
   - **Response:** Created ballot object
 
-- `POST /api/v1/ballots/ranks`
+- `POST /ballots/ranks`
   - **Description:** Get ranks for a specific ballot (requires authentication).
   - **Request Body:**
     - `ballotId`: String (required)
@@ -138,7 +138,7 @@ The base URL for all endpoints is `/api/v1`.
 
 ##### Contact
 
-- `POST /api/v1/contact`
+- `POST /contact`
   - **Description:** Send a contact message.
   - **Request Body:**
     - `name`: String (required)
@@ -148,14 +148,14 @@ The base URL for all endpoints is `/api/v1`.
 
 ##### OTP
 
-- `POST /api/v1/send-otp`
+- `POST /send-otp`
 
   - **Description:** Send OTP for verification.
   - **Request Body:**
     - `email`: String (required)
   - **Response:** Success message
 
-- `POST /api/v1/sendotp`
+- `POST /sendotp`
   - **Description:** Send OTP for verification.
   - **Request Body:**
     - `email`: String (required)
