@@ -1,6 +1,6 @@
 ### Ballot App API Documentation
 
-##### Environmental Variables
+##### Environment Variables
 
 Make sure to include your own credentials for the following environmental variables in your `.env` file:
 
