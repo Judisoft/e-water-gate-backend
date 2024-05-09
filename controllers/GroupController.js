@@ -2,6 +2,16 @@ const Group = require("../models/Group");
 const user = require("../models/user");
 const { addMemberToGroup } = require("../utils/addMemberToGroup");
 
+/**
+ * Retrieves all groups from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status and the list of groups.
+ * If the operation is successful, the success status is true and the list of groups is returned.
+ * If an error occurs, the success status is false and an error message is returned.
+ */
+
 exports.getAllGroups = async (req, res) => {
   try {
     const groups = await Group.find({});
@@ -18,6 +28,13 @@ exports.getAllGroups = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves a single group from the database based on the provided group ID.
+ *
+ * @param {Object} req - The request object containing the group ID.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status and the retrieved group.
+ */
 exports.getSingleGroup = async (req, res) => {
   try {
     const groupId = req.params.id;
@@ -41,15 +58,18 @@ exports.getSingleGroup = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new group with the provided title and admin.
+ *
+ * @param {Object} req - The request object containing the group title and admin email.
+ * @param {Object} res - The response object for sending the result.
+ * @return {Promise<Object>} A JSON object with the success status and details of the created group.
+ */
 exports.createGroup = async (req, res) => {
   try {
-    // Get input data
     const { title, admin } = req.body;
-
-    // Create a new group instance
     const group = new Group({ title, admin });
 
-    // Validate the group instance
     const validationError = group.validateSync();
 
     // If validation fails, send the validation error in the response
@@ -69,11 +89,7 @@ exports.createGroup = async (req, res) => {
       });
     }
 
-    // Save the group to the database
     await group.save();
-
-    // Add group creator (admin) as member to group
-    // Assuming you have a function called `addMemberToGroup`
 
     const memberData = {
       email: admin,
@@ -81,20 +97,29 @@ exports.createGroup = async (req, res) => {
     };
     const addMemberResult = await addMemberToGroup(memberData);
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       group,
       message: "Group created successfully",
       addMemberResult: addMemberResult,
     });
   } catch (error) {
-    // Handle other errors
     return res.status(500).json({
       success: false,
       message: "Group creation failed. Try again",
     });
   }
 };
+
+/**
+ * Updates a group in the database.
+ *
+ * @param {Object} req - The request object containing the group ID and updated group information.
+ * @param {Object} res - The response object for sending the result.
+ * @return {Promise<Object>} A JSON object with the success status and the updated group.
+ * If the group does not exist, a JSON object with the success status set to false and an error message is returned.
+ * If the update fails, a JSON object with the success status set to false and an error message is returned.
+ */
 
 exports.updateGroup = async (req, res) => {
   try {
@@ -122,6 +147,14 @@ exports.updateGroup = async (req, res) => {
     });
   }
 };
+
+/**
+ * Deletes a group from the database.
+ *
+ * @param {Object} req - The request object containing the group ID.
+ * @param {Object} res - The response object for sending the result.
+ * @return {Promise<Object>} A JSON object with the success status and a message indicating the result of the operation.
+ */
 
 exports.deleteGroup = async (req, res) => {
   try {

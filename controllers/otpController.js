@@ -1,6 +1,14 @@
-const otpGenerator = require('otp-generator');
-const OTP = require('../models/OTP');
-const User = require('../models/user');
+const otpGenerator = require("otp-generator");
+const OTP = require("../models/OTP");
+const User = require("../models/user");
+
+/**
+ * Sends an OTP (One-Time Password) to the user's email address.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} The response object with the status and message.
+ */
 
 exports.sendOTP = async (req, res) => {
   try {
@@ -11,7 +19,7 @@ exports.sendOTP = async (req, res) => {
     if (checkUserPresent) {
       return res.status(401).json({
         success: false,
-        message: 'User is already registered',
+        message: "User is already registered",
       });
     }
     let otp = otpGenerator.generate(6, {
@@ -30,7 +38,7 @@ exports.sendOTP = async (req, res) => {
     const otpBody = await OTP.create(otpPayload);
     res.status(200).json({
       success: true,
-      message: 'OTP sent successfully',
+      message: "OTP sent successfully",
       otp,
     });
   } catch (error) {

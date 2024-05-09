@@ -1,6 +1,17 @@
 const Member = require("../models/Member");
 const { addMemberToGroup } = require("../utils/addMemberToGroup");
 
+/**
+ * Retrieves all members from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status, the members list, and a message.
+ * If the members list is empty, the success status is true, the members list is empty, and a message is returned.
+ * If the members list is not empty, the success status is true, the members list is returned, and no message is returned.
+ * If an error occurs, the success status is false, and a failure message is returned.
+ */
+
 exports.getAllMembers = async (req, res) => {
   try {
     const members = await Member.find({});
@@ -23,6 +34,13 @@ exports.getAllMembers = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves a single member from the database based on the provided member ID.
+ *
+ * @param {Object} req - The request object containing the member ID.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status and the retrieved member.
+ */
 exports.getSingleMember = async (req, res) => {
   try {
     const memberId = req.params.id;
@@ -46,12 +64,18 @@ exports.getSingleMember = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new member in the specified group.
+ *
+ * @param {Object} req - The request object containing the member's email and group.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status, the created member, and a message.
+ */
+
 exports.createMember = async (req, res) => {
   try {
-    //get input data
     const { email, group } = req.body;
     console.log(req.body);
-    // Check if All Details are there or not
     if (!email || !group) {
       return res.status(403).send({
         success: false,
@@ -78,6 +102,13 @@ exports.createMember = async (req, res) => {
   }
 };
 
+/**
+ * Updates a member in the database.
+ *
+ * @param {Object} req - The request object containing the member's ID and updated information.
+ * @param {Object} res - The response object for sending the result.
+ * @return {Promise<Object>} A JSON object containing the success status and the updated member.
+ */
 exports.updateMember = async (req, res) => {
   try {
     const memberId = req.params.id;
@@ -104,6 +135,14 @@ exports.updateMember = async (req, res) => {
     });
   }
 };
+
+/**
+ * Deletes a member from the database.
+ *
+ * @param {Object} req - The request object containing the member ID.
+ * @param {Object} res - The response object for sending the result.
+ * @return {Promise<Object>} A JSON object containing the success status and a message indicating the result of the operation.
+ */
 
 exports.deleteMember = async (req, res) => {
   try {

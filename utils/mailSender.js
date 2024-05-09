@@ -1,9 +1,17 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
+/**
+ * Asynchronously sends an email with the provided email, title, and body.
+ *
+ * @param {string} email - The email address of the recipient.
+ * @param {string} title - The title of the email.
+ * @param {string} body - The body content of the email.
+ * @return {Promise<Object>} A Promise that resolves to an object containing the information about the sent email.
+ */
 const mailSender = async (email, title, body) => {
   try {
-    //to send email ->  firstly create a Transporter
+    //create a transporter
     let transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST, //-> Host SMTP detail
       auth: {

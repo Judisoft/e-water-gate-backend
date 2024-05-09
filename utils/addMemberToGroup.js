@@ -1,5 +1,11 @@
 const Member = require("../models/Member");
 
+/**
+ * Adds a member to a group. If the member already exists, it updates the group information. If the member is new, it creates a new member entry.
+ *
+ * @param {Object} member - The member object containing email and group information.
+ * @return {Object} An object indicating the success status and additional details like the added member or an error message.
+ */
 exports.addMemberToGroup = async (member) => {
   try {
     const existingMember = await Member.findOne({ email: member.email });

@@ -1,5 +1,13 @@
 const mailSender = require("../utils/mailSender");
 
+/**
+ * Sends emails to a list of recipients with a ballot update.
+ *
+ * @param {Object} balloter - The balloter object containing user information.
+ * @param {Array} emails - The list of email addresses to send the emails to.
+ * @return {Promise<void>} - A promise that resolves when all emails are sent successfully.
+ */
+
 exports.sendEmails = async (balloter, emails) => {
   try {
     const logoUrl =

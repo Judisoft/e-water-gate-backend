@@ -1,6 +1,13 @@
 const Ballot = require("../models/Ballot");
 const Member = require("../models/Member");
 
+/**
+ * Retrieves the ballot status of a user.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status and the user's ballot status.
+ */
 exports.getUserBallotStatus = async (req, res) => {
   try {
     return res.json({
@@ -11,6 +18,14 @@ exports.getUserBallotStatus = async (req, res) => {
     return console.log(error);
   }
 };
+
+/**
+ * Retrieves all ballots from the database.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} The JSON response containing the success status and the list of ballots.
+ */
 
 exports.getAllBallots = async (req, res) => {
   try {
@@ -27,6 +42,14 @@ exports.getAllBallots = async (req, res) => {
     });
   }
 };
+
+/**
+ * Creates a new ballot.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} The JSON response containing the success status, the new ballot, and a message.
+ */
 
 exports.createBallot = async (req, res) => {
   try {
@@ -71,6 +94,17 @@ exports.createBallot = async (req, res) => {
     });
   }
 };
+
+/**
+ * Retrieves the ranks of members in a given group.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @return {Promise<Object>} A JSON object containing the success status, the ballot list, and a message.
+ * If the ballot list is found, the success status is true, the ballot list is returned, and a success message is returned.
+ * If the ballot list is not found, the success status is false, the ballot list is returned, and a failure message is returned.
+ * If an error occurs, the success status is false, and a failure message is returned.
+ */
 
 exports.getRanks = async (req, res) => {
   try {

@@ -7,7 +7,7 @@ const { generateResetToken } = require("../utils/resetToken");
 const mailSender = require("../utils/mailSender");
 require("dotenv").config();
 
-//signup handle
+// signup handle
 exports.signup = async (req, res) => {
   try {
     //get input data
@@ -222,10 +222,10 @@ exports.forgotpassword = async (req, res) => {
       `Reset Link: <a href="http://localhost:3000/reset-password/${token}">Reset Password</a>`
     );
 
-    res.json({ 
-        success: true,
-        token: token,
-        message: "Password reset email sent" 
+    res.json({
+      success: true,
+      token: token,
+      message: "Password reset email sent",
     });
   } catch (error) {
     console.error(error);
