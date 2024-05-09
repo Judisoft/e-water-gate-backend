@@ -1,4 +1,4 @@
-### API Documentation
+### Ballot App API Documentation
 
 #### Base URL
 
