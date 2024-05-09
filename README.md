@@ -1,5 +1,17 @@
 ### Ballot App API Documentation
 
+##### Environmental Variables
+
+Make sure to include your own credentials for the following environmental variables in your `.env` file:
+
+- `MONGODB_URL`: MongoDB connection URL. Example: `mongodb+srv://username:password@your-cluster.mongodb.net/your-database`
+- `PORT`: Port number for the server to listen on. Example: `5000`
+- `JWT_EXP`: JWT token expiration time.
+- `MAIL_HOST`: Hostname for sending emails.
+- `MAIL_USER`: Email address used for sending emails.
+- `MAIL_PASS`: Password for the email account.
+- `MAIL_SENDER`: Sender's name for outgoing emails.
+
 #### Base URL
 
 The base URL for all endpoints is `/api/v1`.
