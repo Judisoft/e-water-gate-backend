@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("dotenv").config();
-const PORT = process.env.PORT || 4000;
+const port = process.env.PORT || 4000;
 
 app.use(express.json());
 
@@ -34,8 +34,8 @@ async function start() {
     //calling Database function
     require("./config/database").connect();
 
-    app.listen(PORT, () => {
-      console.log(`Server running on ${PORT}`);
+    app.listen(port, () => {
+      console.log(`Server running on ${port}`);
     });
   } catch (error) {
     console.log(error);
