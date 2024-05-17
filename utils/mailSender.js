@@ -17,6 +17,7 @@ const mailSender = async (email, title, body) => {
       port: 587, // Use the default port for Gmail
       secure: false, // Use TLS encryption
       auth: {
+        type: "login",
         user: process.env.GMAIL_USER, // Gmail address
         pass: process.env.GMAIL_PASS, // Gmail password or app-specific password
       },
