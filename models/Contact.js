@@ -23,12 +23,12 @@ ContactSchema.pre("save", async function (next) {
 
     await mailSender(
       "ballotapp24@gmail.com",
-      "Contact Us",
+      "Contact Message",
       `<div style="padding: 30px; text-align: center; background-color: #f5f5f5;">
         <img src="${logoUrl}" alt="Logo" style="width: 75px; height: 75px; margin-bottom: 20px;">
           <p style="font-size: 18px; margin-bottom: 20px;">
             ${this.message} <br>
-            ${this.email}
+            From: ${this.name} (${this.email})
           </p>
         </div>
         `
