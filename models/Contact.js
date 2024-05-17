@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mailSender = require("../utils/mailSender");
 
 ContactSchema = new mongoose.Schema({
   userName: {
