@@ -13,9 +13,10 @@ const mailSender = async (email, title, body) => {
   try {
     // Create a transporter
     let transporter = nodemailer.createTransport({
-      service: "gmail", // Use Gmail's SMTP server
+      host: "smtp.gmail.com", // Use Gmail's SMTP server
+      port: 587, // Use the default port for Gmail
+      secure: false, // Use TLS encryption
       auth: {
-        type: "login",
         user: process.env.GMAIL_USER, // Gmail address
         pass: process.env.GMAIL_PASS, // Gmail password or app-specific password
       },
