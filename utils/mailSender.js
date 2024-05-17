@@ -15,6 +15,7 @@ const mailSender = async (email, title, body) => {
     let transporter = nodemailer.createTransport({
       service: "gmail", // Use Gmail's SMTP server
       auth: {
+        type: "login",
         user: process.env.GMAIL_USER, // Gmail address
         pass: process.env.GMAIL_PASS, // Gmail password or app-specific password
       },
