@@ -28,7 +28,7 @@ ContactSchema.pre("save", async function (next) {
         <img src="${logoUrl}" alt="Logo" style="width: 75px; height: 75px; margin-bottom: 20px;">
           <p style="font-size: 18px; margin-bottom: 20px;">
             ${this.message} <br>
-            From: ${this.name} (${this.email})
+            From: ${this.userName} (${this.email})
           </p>
         </div>
         `
