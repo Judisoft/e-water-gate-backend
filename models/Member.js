@@ -27,7 +27,7 @@ MemberSchema.pre("save", async function (next) {
             this.group[this.group.length - 1]
           }
         </h2>
-        <a href="http://localhost:3000/ballot/" style="display: inline-block; font-size: 18px; padding: 10px 20px; background-color: #2563EB; color: #ffffff; border-radius: 8px; text-decoration: none;">Click here to ballot</a>
+        <a href="https://ballot-app.onrender.com/ballot/" style="display: inline-block; font-size: 18px; padding: 10px 20px; background-color: #2563EB; color: #ffffff; border-radius: 8px; text-decoration: none;">Click here to ballot</a>
       </div>
       `
     );

@@ -219,7 +219,7 @@ exports.forgotpassword = async (req, res) => {
     await mailSender(
       User.email,
       "Reset Password",
-      `Reset Link: <a href="http://localhost:3000/reset-password/${token}">Reset Password</a>`
+      `Reset Link: <a href="https://ballot-app.onrender.com/reset-password/${token}">Reset Password</a>`
     );
 
     res.json({
