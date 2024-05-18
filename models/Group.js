@@ -14,6 +14,10 @@ GroupSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  isBallotOpen: {
+    type: Boolean,
+    default: false,
+  },
   created_at: {
     type: Date,
     default: Date.now,

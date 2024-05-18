@@ -1,5 +1,6 @@
 const Ballot = require("../models/Ballot");
 const Member = require("../models/Member");
+const Group = require("../models/Group");
 
 /**
  * Retrieves the ballot status of a user.
@@ -16,6 +17,43 @@ exports.getUserBallotStatus = async (req, res) => {
     });
   } catch (error) {
     return console.log(error);
+  }
+};
+
+exports.activateBallot = async (req, res) => {
+  try {
+    const { groupId, isBallotOpen } = req.body;
+
+    // Ensure groupId and isBallotOpen are provided in the request body
+    if (!groupId || typeof isBallotOpen !== "boolean") {
+      return res.status(400).json({
+        success: false,
+        message: "Your request is missing some fields",
+      });
+    }
+
+    const existingGroup = await Group.findById(groupId);
+    if (!existingGroup) {
+      return res.status(404).json({
+        success: false,
+        message: "Trying to activate ballot for a group that does not exist!",
+      });
+    }
+
+    // Update the isBallotOpen field
+    existingGroup.isBallotOpen = isBallotOpen;
+    await existingGroup.save();
+
+    return res.status(200).json({
+      success: true,
+      group: existingGroup,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to activate ballot! Try again",
+    });
   }
 };
 
