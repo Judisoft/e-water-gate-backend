@@ -126,7 +126,6 @@ exports.createGroup = async (req, res) => {
 
 exports.updateGroup = async (req, res) => {
   try {
-    console.log(req.user.email);
     const groupTitle = req.params.group.toLowerCase();
     const existingGroup = await Group.findOne({ title: groupTitle }).exec();
 

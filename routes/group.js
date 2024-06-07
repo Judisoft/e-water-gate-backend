@@ -10,6 +10,7 @@ const {
 } = require("../controllers/GroupController");
 const {
   auth,
+  isGroupAdmin,
   isMember,
   isAdmin,
   isSysAdmin,
@@ -20,7 +21,7 @@ router.get("/groups", auth, getAllGroups);
 router.get("/groups/:group", auth, getSingleGroup); // get by group title
 router.post("/groups", auth, createGroup);
 // router.put("/groups/:id", auth, updateGroup); //update by id
-router.put("/groups/:group", auth, updateGroup); //update by group title
+router.put("/groups/:group", auth, isGroupAdmin, updateGroup); //update by group title
 router.delete("/groups/:id", auth, deleteGroup);
 
 module.exports = router;
