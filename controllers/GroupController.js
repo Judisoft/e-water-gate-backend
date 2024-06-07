@@ -126,6 +126,7 @@ exports.createGroup = async (req, res) => {
 
 exports.updateGroup = async (req, res) => {
   try {
+    console.log(req.user.email);
     const groupTitle = req.params.group.toLowerCase();
     const existingGroup = await Group.findOne({ title: groupTitle }).exec();
 
@@ -133,6 +134,14 @@ exports.updateGroup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Group does not exist!",
+      });
+    }
+
+    // Check if the user updating the group is an admin
+    if (!existingGroup.admin.includes(req.user.email)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this group",
       });
     }
 
