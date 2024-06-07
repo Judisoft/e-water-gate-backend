@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const Group = require("../models/Group");
 require("dotenv").config();
 
 //auth, isMember, isAdmin
@@ -116,27 +115,6 @@ exports.isSysAdmin = (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: "You are not authorized SysAdmin⚠️",
-      });
-    }
-
-    next();
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Something error occured⚠️: " + error,
-    });
-  }
-};
-
-exports.isGroupAdmin = (req, res, next) => {
-  try {
-    const groupTitle = req.params.group.toLowerCase();
-    const existingGroup = Group.findOne({ title: groupTitle }).exec();
-    // Check if the user updating the group is an admin
-    if (!existingGroup.admin.includes(req.user.email)) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to update this group",
       });
     }
 

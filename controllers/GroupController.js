@@ -136,14 +136,6 @@ exports.updateGroup = async (req, res) => {
       });
     }
 
-    // Check if the user updating the group is an admin
-    if (!existingGroup.admin.includes(req.user.email)) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to update this group",
-      });
-    }
-
     const updatedGroup = await Group.findOneAndUpdate(
       { title: groupTitle }, // Find the group by title
       { isBallotOpen: req.body.isBallotOpen }, // Update only the isBallotOpen property
