@@ -37,14 +37,17 @@ exports.getAllGroups = async (req, res) => {
  */
 exports.getSingleGroup = async (req, res) => {
   try {
-    const groupId = req.params.id;
-    const group = await Group.findOne({ _id: groupId }).exec();
-    if (group.length === 0) {
+    const groupTitle = req.params.group.toLowerCase();
+    const group = await Group.findOne({ title: groupTitle }).exec();
+
+    if (!group) {
+      // Check if group is null
       return res.status(404).json({
         success: false,
         message: "The requested group doesn't exist",
       });
     }
+
     return res.status(200).json({
       success: true,
       group,
@@ -81,7 +84,7 @@ exports.createGroup = async (req, res) => {
     }
 
     // Check if group already exists
-    const existingGroup = await Group.findOne({ title });
+    const existingGroup = await Group.findOne({ title: title.toLowerCase() });
     if (existingGroup) {
       return res.status(400).json({
         success: false,
@@ -123,21 +126,31 @@ exports.createGroup = async (req, res) => {
 
 exports.updateGroup = async (req, res) => {
   try {
-    const groupId = req.params.id;
-    const existingGroup = await Group.findOne({ _id: groupId }).exec();
+    const groupTitle = req.params.group.toLowerCase();
+    const existingGroup = await Group.findOne({ title: groupTitle }).exec();
+
     if (!existingGroup) {
       return res.status(404).json({
         success: false,
         message: "Group does not exist!",
       });
     }
-    const group = await Group.findOneAndUpdate({ _id: groupId }, req.body, {
-      new: true,
-      runValidators: true,
-    });
+
+    const updatedGroup = await Group.findOneAndUpdate(
+      { title: groupTitle }, // Find the group by title
+      { isBallotOpen: req.body.isBallotOpen }, // Update only the isBallotOpen property
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
     return res.status(200).json({
-      succes: true,
-      group,
+      success: true,
+      group: updatedGroup,
+      message: `Group ${
+        req.body.isBallotOpen ? "opened" : "closed"
+      } for balloting`,
     });
   } catch (error) {
     console.error(error);

@@ -6,7 +6,7 @@ const {
   createBallot,
   getRanks,
   getAllBallots,
-  activateBallot
+  activateBallot,
 } = require("../controllers/BallotController");
 const {
   auth,
@@ -15,10 +15,8 @@ const {
   isSysAdmin,
 } = require("../middlewares/authMiddle");
 
-router.get("/ballots", auth, getUserBallotStatus);
 router.get("/ballots/all", auth, getAllBallots);
 router.post("/ballots", auth, createBallot);
 router.post("/ballots/ranks", auth, getRanks);
-router.patch("/ballots/activate", auth, activateBallot);
 
 module.exports = router;

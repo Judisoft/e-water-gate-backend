@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-GroupSchema = new mongoose.Schema({
+const GroupSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -23,5 +23,14 @@ GroupSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+// Pre-save hook to convert the title to lowercase
+GroupSchema.pre("save", function (next) {
+  this.title = this.title.toLowerCase();
+  next();
+});
+
+// Create a unique index on the title field in lowercase
+GroupSchema.index({ title: 1 }, { unique: true });
 
 module.exports = mongoose.model("Group", GroupSchema);
