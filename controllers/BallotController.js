@@ -55,14 +55,14 @@ exports.createBallot = async (req, res) => {
     }
 
     // Check if the user has already balloted for the group
-    const existingBallot = await Ballot.findOne({ memberEmail, group });
-    if (existingBallot) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "You have already balloted in this group. You can only ballot once!",
-      });
-    }
+    // const existingBallot = await Ballot.findOne({ memberEmail, group });
+    // if (existingBallot) {
+    //   return res.status(409).json({
+    //     success: false,
+    //     message:
+    //       "You have already balloted in this group. You can only ballot once!",
+    //   });
+    // }
 
     // Create a new ballot
     const newBallot = await Ballot.create({
