@@ -26,6 +26,24 @@ exports.getAllBallots = async (req, res) => {
   }
 };
 
+// Document this later
+exports.checkRank = async (req, res) => {
+   const { rank, group } = req.body;
+
+  try {
+    // Check if the rank is already used in the given group
+    const existingBallot = await Ballot.findOne({ rank, group });
+
+    if (existingBallot) {
+      return res.json({ unique: false });
+    }
+
+    res.json({ unique: true });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 /**
  * Creates a new ballot.
  *
