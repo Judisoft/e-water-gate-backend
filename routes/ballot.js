@@ -5,6 +5,7 @@ const {
   getUserBallotStatus,
   createBallot,
   getRanks,
+  checkRank,
   getAllBallots,
   activateBallot,
 } = require("../controllers/BallotController");
@@ -18,5 +19,6 @@ const {
 router.get("/ballots/all", auth, getAllBallots);
 router.post("/ballots", auth, createBallot);
 router.post("/ballots/ranks", auth, getRanks);
+router.post("/ballots/check-rank", auth, checkRank);
 
 module.exports = router;
