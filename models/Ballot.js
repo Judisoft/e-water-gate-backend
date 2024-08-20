@@ -18,6 +18,7 @@ BallotSchema = new mongoose.Schema({
   rank: {
     type: Number,
     required: true,
+    unique: true
   },
   created_at: {
     type: Date,
