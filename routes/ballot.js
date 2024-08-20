@@ -19,6 +19,6 @@ const {
 router.get("/ballots/all", auth, getAllBallots);
 router.post("/ballots", auth, createBallot);
 router.post("/ballots/ranks", auth, getRanks);
-router.post("/ballots/check-rank", auth, checkRank);
+router.post("/check-rank", auth, checkRank);
 
 module.exports = router;
