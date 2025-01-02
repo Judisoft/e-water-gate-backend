@@ -14,7 +14,9 @@ const mailSender = require("../utils/mailSender");
 
 exports.PostData = async (req, res) => {
   try {
-    const {turbidity, pH, TDS, salinity, temperature, volume} = req.body
+    const { turbidity, pH, TDS, salinity, temperature, volume } = req.query;
+    
+    console.log(req.query);
     //email this data to the user
     await mailSender(
       "kumjude09@gmail.com",
