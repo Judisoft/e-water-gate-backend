@@ -17,22 +17,16 @@ app.use(express.json());
 
 //route importing and mounting
 const user = require("./routes/user");
-const group = require("./routes/group");
 const member = require("./routes/member");
-const ballot = require("./routes/ballot");
-const contact = require("./routes/contact");
 
 app.use("/api/v1", user);
 app.post("/api/v1/send-otp", otpController.sendOTP);
-app.use("/api/v1", group);
 app.use("/api/v1", member);
-app.use("/api/v1", ballot);
-app.use("/api/v1", contact);
 
 async function start() {
   try {
     //calling Database function
-    require("./config/database").connect();
+    // require("./config/database").connect();
 
     app.listen(port, () => {
       console.log(`Server running on ${port}`);

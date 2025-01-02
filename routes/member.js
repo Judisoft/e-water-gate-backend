@@ -2,12 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getAllMembers,
-  getSingleMember,
-  createMember,
-  updateMember,
-  deleteMember,
-} = require("../controllers/MemberController");
+  PostData
+} = require("../controllers/Data");
 const {
   auth,
   isMember,
@@ -15,10 +11,6 @@ const {
   isSysAdmin,
 } = require("../middlewares/authMiddle");
 
-router.get("/members", getAllMembers);
-router.get("/members/:id", auth, getSingleMember);
-router.post("/members", auth, createMember);
-router.put("/members/:id", auth, updateMember);
-router.delete("/members/:id", auth, deleteMember);
+router.post("/data", PostData);
 
 module.exports = router;

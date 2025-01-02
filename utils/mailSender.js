@@ -25,7 +25,7 @@ const mailSender = async (email, title, body) => {
 
     // Send e-mails to users
     let info = await transporter.sendMail({
-      from: `"Ballot-App" <${process.env.GMAIL_USER}>`, // Sender address
+      from: `"E-waterGate" <${process.env.GMAIL_USER}>`, // Sender address
       to: email, // Recipient address
       subject: title, // Subject line
       html: body, // HTML body content
