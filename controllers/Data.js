@@ -19,7 +19,7 @@ exports.PostData = async (req, res) => {
     console.log(req.query);
     //email this data to the user
     await mailSender(
-      "kumjude09@gmail.com",
+      "suhpeterche@gmail.com",
       "Water Quality Data",
       `<div style="padding: 30px; text-align: center; background-color: #f5f5f5;">
       <h2 style="font-size: 24px; margin-bottom: 20px;">
