@@ -12,14 +12,14 @@ const mailSender = require("../utils/mailSender");
  * If an error occurs, the success status is false, and a failure message is returned.
  */
 
-exports.PostData = async (req, res) => {
+exports.StreamData = async (req, res) => {
   try {
     const { turbidity, pH, TDS, salinity, temperature, volume } = req.query;
     
     console.log(req.query);
     //email this data to the user
     await mailSender(
-      "suhpeterche@gmail.com",
+      "kumjude09@gmail.com",
       "Water Quality Data",
       `<div style="padding: 30px; text-align: center; background-color: #f5f5f5;">
       <h2 style="font-size: 24px; margin-bottom: 20px;">
@@ -53,3 +53,38 @@ exports.PostData = async (req, res) => {
     });
   }
 };
+
+exports.StoreData = async (req, res) => {
+  try {
+    const {date, device_status, turbidity, pH, TDS, salinity, temperature, volume} = req.body;
+    await mailSender(
+      "kumjude09@gmail.com",
+      "Water Quality Data",
+      `<div style="padding: 30px; text-align: center; background-color: #f5f5f5;">
+      <h2 style="font-size: 24px; margin-bottom: 20px;">
+        Water Quality Data
+      </h2>
+      <p>Turbidity: ${turbidity}</p>
+      <p>pH: ${pH}</p>
+      <p>TDS: ${TDS}</p>
+      <p>Salinity: ${salinity}</p>
+      <p>Temperature: ${temperature}</p>
+      <p>Volume: ${volume}</p>
+      <p>Date: ${date}</p>
+      <p>Device Status: ${device_status}</p>
+    </div>
+    `
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Data stored successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Operation failed! Try again",
+    });
+    
+  }
+}

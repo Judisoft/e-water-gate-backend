@@ -17,11 +17,11 @@ app.use(express.json());
 
 //route importing and mounting
 const user = require("./routes/user");
-const member = require("./routes/member");
+const data = require("./routes/data");
 
 app.use("/api/v1", user);
 app.post("/api/v1/send-otp", otpController.sendOTP);
-app.use("/api/v1", member);
+app.use("/api/v1", data);
 
 async function start() {
   try {

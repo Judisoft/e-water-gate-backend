@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  PostData
+  StreamData,
+  StoreData
 } = require("../controllers/Data");
 const {
   auth,
@@ -11,6 +12,9 @@ const {
   isSysAdmin,
 } = require("../middlewares/authMiddle");
 
-router.post("/data", PostData);
+router.post("/data/stream", StreamData);
+router.post("/data/store", StoreData)
+
+
 
 module.exports = router;
