@@ -3,11 +3,10 @@ const router = express.Router();
 
 //Handlers from controllers
 const {
-  login,
-  signup,
-  sendotp,
-  forgotpassword,
-  resetpassword,
+  logIn,
+  signUp,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/auth");
 const {
   auth,
@@ -15,14 +14,14 @@ const {
   isAdmin,
   isSysAdmin,
 } = require("../middlewares/authMiddle");
-const { getAllUsers } = require("../controllers/UserController");
+const { getAllUsers, getSingleUser } = require("../controllers/UserController");
 
-router.post("/login", login);
-router.post("/signup", signup);
-router.post("/forgot-password", forgotpassword);
-router.post("/reset-password/:token", resetpassword);
-router.post("/sendotp", sendotp);
+router.post("/login", logIn);
+router.post("/signup", signUp);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 router.get("/users", auth, getAllUsers);
+router.get("/users/:user_id", getSingleUser);
 
 //testing protected route
 router.get("/test", auth, (req, res) => {

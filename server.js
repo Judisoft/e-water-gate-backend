@@ -1,6 +1,8 @@
 const express = require("express");
-const otpController = require("./controllers/otpController");
 const cors = require("cors");
+const { initializeApp } = require("firebase/app");
+const { getDatabase } = require("firebase/database");
+const { getAuth } = require("firebase/auth");
 
 const app = express();
 app.use(cors());
@@ -13,28 +15,48 @@ app.use(express.urlencoded({ extended: true }));
 require("dotenv").config();
 const port = process.env.PORT || 4000;
 
-app.use(express.json());
-
-//route importing and mounting
+// Route importing and mounting
 const user = require("./routes/user");
 const data = require("./routes/data");
+const device = require("./routes/device");
 
 app.use("/api/v1", user);
-app.post("/api/v1/send-otp", otpController.sendOTP);
 app.use("/api/v1", data);
+app.use("/api/v1", device)
+
 
 async function start() {
   try {
-    //calling Database function
-    // require("./config/database").connect();
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBOOsKN2TCl1nZMs9bMC0Y7rsfXwtTy0TQ",
+      authDomain: "e-wategate.firebaseapp.com",
+      databaseURL: "https://e-wategate-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "e-wategate",
+      storageBucket: "e-wategate.firebasestorage.app",
+      messagingSenderId: "866686347436",
+      appId: "1:866686347436:web:7b019d20d8f4b9a1d7d709",
+      measurementId: "G-Q7E002TKV1",
+    };
 
+    // Initialize Firebase
+    const firebaseApp = initializeApp(firebaseConfig);
+
+    // Initialize Firebase services
+    const database = getDatabase(firebaseApp);
+    const auth = getAuth(firebaseApp);
+
+    console.log("Firebase initialized");
+
+    // Start the server
     app.listen(port, () => {
       console.log(`Server running on ${port}`);
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error starting the server:", error);
   }
 }
+
 start();
 
 module.exports = app;

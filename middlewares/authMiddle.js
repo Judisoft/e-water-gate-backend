@@ -12,35 +12,43 @@ require("dotenv").config();
  * @return {void}
  */
 
+
 exports.auth = (req, res, next) => {
   try {
-    //extract JWT token
-    const token = req.headers.authorization.split(" ")[1]; // req.body.token || req.cookies.token;
-    console.log(token);
+    // Extract JWT token from the Authorization header
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        message: "Authorization token missing or invalid",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Token Missing",
+        message: "Token missing",
       });
     }
 
-    //verify the token
+    // Verify the token
     try {
-      const decode = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decode;
-      console.log(req.user);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+      next();
     } catch (error) {
       return res.status(401).json({
         success: false,
-        message: "Not authorized to perform this action. Login Again",
+        message: "Invalid or expired token. Please login again.",
       });
     }
-
-    next();
   } catch (error) {
-    return res.status(401).json({
+    return res.status(500).json({
       success: false,
-      message: "Error Occured in Authentication",
+      message: "An error occurred during authentication",
     });
   }
 };
@@ -56,7 +64,6 @@ exports.auth = (req, res, next) => {
 
 exports.isMember = (req, res, next) => {
   try {
-    console.log(req.user);
     if (req.user.role !== "Member") {
       return res.status(401).json({
         success: false,

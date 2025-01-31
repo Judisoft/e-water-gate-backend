@@ -1,75 +1,101 @@
 const bcrypt = require("bcrypt");
 const user = require("../models/user");
 const jwt = require("jsonwebtoken");
-const OTP = require("../models/OTP");
 const otpGenerator = require("otp-generator");
 const { generateResetToken } = require("../utils/resetToken");
 const mailSender = require("../utils/mailSender");
+const { getDatabase, ref, set, get, child } = require("firebase/database");
+const { v4: uuidv4 } = require("uuid"); // Import uuid library
+
+
 require("dotenv").config();
 
-// signup handle
-exports.signup = async (req, res) => {
-  try {
-    //get input data
-    const { name, email, telephone, password, role, otp } = req.body;
 
-    // Check if All Details are there or not
-    if (!name || !email || !telephone || !password || !otp) {
+exports.signUp = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      telephone,
+      password,
+      deviceId,
+      consumptionType,
+      location,
+    } = req.body;
+
+    // Check if all details are provided
+    if (
+      !name ||
+      !email ||
+      !telephone ||
+      !password ||
+      !deviceId ||
+      !consumptionType ||
+      !location
+    ) {
       return res.status(403).send({
         success: false,
-        message: "All Fields are required",
+        message: "All fields are required",
       });
     }
 
-    //check if use already exists?
-    const existingUser = await user.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists",
-      });
+    // Get a reference to the Firebase database
+    const database = getDatabase();
+    const usersRef = ref(database, "users"); // Reference to the 'users' collection
+
+    // Check if the user already exists
+    const snapshot = await get(usersRef); // Fetch all users
+    if (snapshot.exists()) {
+      const usersObject = snapshot.val(); // Get users as an object
+      const usersArray = Object.values(usersObject); // Convert object to an array
+
+      // Check if any user has the provided email
+      const userExists = usersArray.some((user) => user.email === email);
+
+      if (userExists) {
+        return res.status(409).json({
+          success: false,
+          message: "User with this email already exists",
+        });
+      }
+
+      // Check if the device ID is already in use
+      const deviceIdExists = usersArray.some(
+        (user) => user.deviceId === deviceId
+      );
+
+      if (deviceIdExists) {
+        return res.status(409).json({
+          success: false,
+          message: "Device ID already in use",
+        });
+      }
     }
 
-    // Find the most recent OTP for the email
-    const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
-    console.log(response);
-    if (response.length === 0) {
-      // OTP not found for the email
-      return res.status(400).json({
-        success: false,
-        message: "The OTP is not valid",
-      });
-    } else if (otp !== response[0].otp) {
-      // Invalid OTP
-      return res.status(400).json({
-        success: false,
-        message: "The OTP is not valid",
-      });
-    }
+    // Generate a unique ID for the user
+    const userId = uuidv4();
 
-    //secure password
-    let hashedPassword;
-    try {
-      hashedPassword = await bcrypt.hash(password, 10);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: `Hashing pasword error for ${password}: ` + error.message,
-      });
-    }
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const User = await user.create({
+    // Save the user data in Firebase
+    const newUserRef = ref(database, `users/${userId}`);
+    await set(newUserRef, {
+      id: userId,
       name,
       email,
       telephone,
       password: hashedPassword,
-      role,
+      deviceId,
+      consumptionType,
+      location,
+      role: "USER",
     });
 
     return res.status(200).json({
       success: true,
-      User,
       message: "Account created successfully",
+      userId,
     });
   } catch (error) {
     console.error(error);
@@ -80,124 +106,96 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+
+exports.logIn = async (req, res) => {
   try {
-    //data fetch
     const { email, password } = req.body;
-    //validation on email and password
+
+    // Validate input
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Please fill all the details carefully",
+        message: "Please provide email and password",
       });
     }
 
-    //check for registered User
-    let User = await user.findOne({ email });
-    //if user not registered or not found in database
-    if (!User) {
+    // Get a reference to the Firebase database
+    const database = getDatabase();
+    const usersRef = ref(database, "users");
+
+    // Fetch all users and find the one with the matching email
+    const snapshot = await get(usersRef);
+    if (!snapshot.exists()) {
+      return res.status(404).json({
+        success: false,
+        message: "No users found",
+      });
+    }
+
+    let user = null;
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      if (userData.email === email) {
+        user = userData;
+      }
+    });
+
+    // Check if user exists
+    if (!user) {
       return res.status(401).json({
         success: false,
         message: "Email not registered",
       });
     }
 
-    const payload = {
-      email: User.email,
-      id: User._id,
-      role: User.role,
-    };
-    //verify password and generate a JWt token 🔎
-    if (await bcrypt.compare(password, User.password)) {
-      //if password matched
-      //now lets create a JWT token
-      let token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXP,
-      });
-      User = User.toObject();
-      User.token = token;
-
-      User.password = undefined;
-      const options = {
-        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        httpOnly: true, //It will make cookie not accessible on client side -> good way to keep hackers away
-      };
-      res.cookie("token", token, options).status(200).json({
-        success: true,
-        token,
-        User,
-        message: "Logged in Successfully",
-      });
-    } else {
-      //password donot matched
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(403).json({
         success: false,
         message: "Password incorrect",
       });
     }
+
+    // Generate JWT token
+    const payload = {
+      email: user.email,
+      id: user.id,
+      role: user.role,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXP,
+    });
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        telephone: user.telephone,
+        deviceId: user.deviceId,
+        consumptionType: user.consumptionType,
+        location: user.location,
+      },
+      message: "Logged in successfully",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Login failure :" + error,
+      message: `Login failed: ${error.message}`,
     });
   }
 };
 
-// Send OTP For Email Verification
-exports.sendotp = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    // Check if user is already present
-    // Find user with provided email
-    const checkUserPresent = await user.findOne({ email });
-    // to be used in case of signup
-
-    // If user found with provided email
-    if (checkUserPresent) {
-      // Return 401 Unauthorized status code with error message
-      return res.status(401).json({
-        success: false,
-        message: `User is Already Registered`,
-      });
-    }
-
-    var otp = otpGenerator.generate(6, {
-      upperCaseAlphabets: false,
-      lowerCaseAlphabets: false,
-      specialChars: false,
-    });
-    const result = await OTP.findOne({ otp: otp });
-    console.log("Result is Generate OTP Func");
-    console.log("OTP", otp);
-    console.log("Result", result);
-    while (result) {
-      otp = otpGenerator.generate(6, {
-        upperCaseAlphabets: false,
-      });
-    }
-    const otpPayload = { email, otp };
-    const otpBody = await OTP.create(otpPayload);
-    console.log("OTP Body", otpBody);
-    res.status(200).json({
-      success: true,
-      message: `OTP Sent Successfully`,
-      otp,
-    });
-  } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({ success: false, error: error.message });
-  }
-};
 
 // Reset user password
 
-exports.forgotpassword = async (req, res) => {
+exports.forgotPassword = async (req, res) => {
   // Route to handle password reset request
   const { email } = req.body;
-  console.log(email);
-
   try {
     // Find the user with the specified email
     const User = await user.findOne({ email });
@@ -233,7 +231,7 @@ exports.forgotpassword = async (req, res) => {
   }
 };
 
-exports.resetpassword = async (req, res) => {
+exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
