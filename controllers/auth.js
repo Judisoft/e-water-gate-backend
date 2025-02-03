@@ -178,6 +178,7 @@ exports.logIn = async (req, res) => {
         deviceId: user.deviceId,
         consumptionType: user.consumptionType,
         location: user.location,
+        role: user.role,
       },
       message: "Logged in successfully",
     });

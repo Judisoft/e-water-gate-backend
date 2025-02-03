@@ -8,8 +8,9 @@ const {
   isAdmin,
   isSysAdmin,
 } = require("../middlewares/authMiddle");
-const { createDevice } = require("../controllers/DeviceController");
+const { createDevice, getAllDevices } = require("../controllers/DeviceController");
 
 router.post("/devices", createDevice);
+router.get("/devices",  getAllDevices);
 
 module.exports = router;
