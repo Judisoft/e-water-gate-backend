@@ -20,6 +20,11 @@ const user = require("./routes/user");
 const data = require("./routes/data");
 const device = require("./routes/device");
 
+// Health check endpoint
+app.get("/api/v1/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "Server is running" });
+});
+
 app.use("/api/v1", user);
 app.use("/api/v1", data);
 app.use("/api/v1", device)

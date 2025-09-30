@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - MONGODB_URL=mongodb://mongo:27017/e-water-gate
+      - JWT_SECRET=your-jwt-secret-key-here
+      - JWT_EXP=24h
+      - GMAIL_USER=your-gmail@gmail.com
+      - GMAIL_PASS=your-gmail-app-password
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=e-water-gate
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge 
