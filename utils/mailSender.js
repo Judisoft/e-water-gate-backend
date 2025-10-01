@@ -14,18 +14,17 @@ const mailSender = async (email, title, body) => {
     // Create a transporter
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com", // Use Gmail's SMTP server
-      port: 587, // Use the default port for Gmail
-      secure: false, // Use TLS encryption
+      port: 465, // Use SSL port for Gmail
+      secure: true, // Use SSL encryption
       auth: {
-        type: "login",
-        user: process.env.GMAIL_USER, // Gmail address
-        pass: process.env.GMAIL_PASS, // Gmail password or app-specific password
+        user: "kumjude09@gmail.com", // Gmail address
+        pass: "sdgv tadj owhp nopv", // Gmail app-specific password
       },
     });
 
     // Send e-mails to users
     let info = await transporter.sendMail({
-      from: `"E-waterGate" <${process.env.GMAIL_USER}>`, // Sender address
+      from: `"E-waterGate" <e-watergate@gmail.com>`, // Sender address
       to: email, // Recipient address
       subject: title, // Subject line
       html: body, // HTML body content

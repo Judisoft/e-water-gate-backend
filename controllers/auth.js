@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const user = require("../models/user");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 const { generateResetToken } = require("../utils/resetToken");
@@ -198,27 +197,59 @@ exports.forgotPassword = async (req, res) => {
   // Route to handle password reset request
   const { email } = req.body;
   try {
-    // Find the user with the specified email
-    const User = await user.findOne({ email });
+    // Get a reference to the Firebase database
+    const database = getDatabase();
+    const usersRef = ref(database, "users");
 
-    if (!User) {
+    // Fetch all users and find the one with the matching email
+    const snapshot = await get(usersRef);
+    if (!snapshot.exists()) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
 
-    // Generate a unique token for password reset and save it in the user document
+    let user = null;
+    let userId = null;
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      if (userData.email === email) {
+        user = userData;
+        userId = childSnapshot.key;
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Generate a unique token for password reset
     const token = generateResetToken();
-    User.resetToken = token;
-    User.resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour
-    await User.save();
+    const resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour 
+    
+    console.log('Generated token:', token);
+    console.log('Token expiration:', resetTokenExpiration);
+    console.log('User ID:', userId);
+
+    // Update the user document in Firebase with reset token
+    const userRef = ref(database, `users/${userId}`);
+    await set(userRef, {
+      ...user,
+      resetToken: token,
+      resetTokenExpiration: resetTokenExpiration,
+    });
+    
+    console.log('Token stored successfully');
 
     // Send an email to the user with a link containing the token for password reset
     await mailSender(
-      User.email,
+      user.email,
       "Reset Password",
-      `Reset Link: <a href="https://ballot-app.onrender.com/reset-password/${token}">Reset Password</a>`
+      `Reset Link: <a href="http://127.0.0.1:3000/reset-password/${token}">Reset Password</a>`
     );
 
     res.json({
@@ -235,27 +266,60 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
+  
+  console.log('Request params:', req.params);
+  console.log('Request body:', req.body);
+  console.log('Extracted token:', token);
 
   try {
-    // Find the user with the specified token and check if it's still valid
-    const User = await user.findOne({
-      resetToken: token,
-      resetTokenExpiration: { $gt: Date.now() },
-    });
+    // Get a reference to the Firebase database
+    const database = getDatabase();
+    const usersRef = ref(database, "users");
 
-    if (!User) {
+    // Fetch all users and find the one with the matching token
+    const snapshot = await get(usersRef);
+    if (!snapshot.exists()) {
       return res.status(404).json({
         success: false,
         message: "Invalid or expired token",
       });
     }
-    let hashedPassword;
-    hashedPassword = await bcrypt.hash(password, 10);
-    // Update the user's password
-    User.password = hashedPassword;
-    User.resetToken = undefined;
-    User.resetTokenExpiration = undefined;
-    await User.save();
+
+    let user = null;
+    let userId = null;
+    console.log('Looking for token:', token);
+    console.log('Current time:', Date.now());
+    
+    snapshot.forEach((childSnapshot) => {
+      const userData = childSnapshot.val();
+      console.log('User data resetToken:', userData.resetToken);
+      console.log('User data resetTokenExpiration:', userData.resetTokenExpiration);
+      console.log('Token match:', userData.resetToken === token);
+      console.log('Expiration check:', userData.resetTokenExpiration > Date.now());
+      
+      if (userData.resetToken === token && userData.resetTokenExpiration && userData.resetTokenExpiration > Date.now()) {
+        user = userData;
+        userId = childSnapshot.key;
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid or expired token",
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password and remove reset token fields
+    const userRef = ref(database, `users/${userId}`);
+    const { resetToken, resetTokenExpiration, ...userWithoutTokens } = user;
+    await set(userRef, {
+      ...userWithoutTokens,
+      password: hashedPassword,
+    });
 
     return res.json({
       success: true,

@@ -1,4 +1,3 @@
-const Data = require("../models/Data");
 const mailSender = require("../utils/mailSender");
 
 /**
