@@ -230,10 +230,6 @@ exports.forgotPassword = async (req, res) => {
     // Generate a unique token for password reset
     const token = generateResetToken();
     const resetTokenExpiration = Date.now() + 3600000; // Token expires in 1 hour 
-    
-    console.log('Generated token:', token);
-    console.log('Token expiration:', resetTokenExpiration);
-    console.log('User ID:', userId);
 
     // Update the user document in Firebase with reset token
     const userRef = ref(database, `users/${userId}`);
@@ -266,10 +262,6 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
-  
-  console.log('Request params:', req.params);
-  console.log('Request body:', req.body);
-  console.log('Extracted token:', token);
 
   try {
     // Get a reference to the Firebase database
@@ -287,16 +279,10 @@ exports.resetPassword = async (req, res) => {
 
     let user = null;
     let userId = null;
-    console.log('Looking for token:', token);
-    console.log('Current time:', Date.now());
     
     snapshot.forEach((childSnapshot) => {
       const userData = childSnapshot.val();
-      console.log('User data resetToken:', userData.resetToken);
-      console.log('User data resetTokenExpiration:', userData.resetTokenExpiration);
-      console.log('Token match:', userData.resetToken === token);
-      console.log('Expiration check:', userData.resetTokenExpiration > Date.now());
-      
+    
       if (userData.resetToken === token && userData.resetTokenExpiration && userData.resetTokenExpiration > Date.now()) {
         user = userData;
         userId = childSnapshot.key;
